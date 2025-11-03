@@ -1,0 +1,1 @@
+# tqs-indiv-portfolio-joserubemneto
