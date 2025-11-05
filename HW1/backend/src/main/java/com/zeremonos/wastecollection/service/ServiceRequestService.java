@@ -33,19 +33,14 @@ public class ServiceRequestService {
     @Value("${app.max-requests-per-municipality-per-day:10}")
     private int maxRequestsPerMunicipalityPerDay;
 
-    /**
-     * Create a new service request
-     */
     @Transactional
     public ServiceRequestResponse createServiceRequest(ServiceRequestDTO dto) {
         log.info("Creating service request for municipality: {}", dto.getMunicipalityName());
 
-        // Business Rule: Validate date is not in the past
         if (dto.getPreferredDate().isBefore(LocalDate.now())) {
             throw new BusinessException("Preferred date cannot be in the past");
         }
 
-        // Business Rule: Check municipality daily limit
         long activeRequests = serviceRequestRepository
             .countActiveRequestsByMunicipalityAndDate(
                 dto.getMunicipalityName(),
@@ -59,7 +54,6 @@ public class ServiceRequestService {
             );
         }
 
-        // Create service request
         ServiceRequest request = new ServiceRequest();
         request.setToken(UUID.randomUUID().toString());
         request.setMunicipalityCode(dto.getMunicipalityCode());
@@ -75,16 +69,12 @@ public class ServiceRequestService {
 
         ServiceRequest savedRequest = serviceRequestRepository.save(request);
 
-        // Create initial status history
         createStatusHistory(savedRequest, null, RequestStatus.RECEIVED, "Initial request created");
 
         log.info("Service request created with token: {}", savedRequest.getToken());
         return ServiceRequestResponse.fromEntity(savedRequest);
     }
 
-    /**
-     * Get service request by token
-     */
     @Transactional(readOnly = true)
     public ServiceRequestResponse getByToken(String token) {
         log.debug("Fetching service request by token: {}", token);
@@ -94,9 +84,6 @@ public class ServiceRequestService {
         return ServiceRequestResponse.fromEntity(request);
     }
 
-    /**
-     * Cancel service request by token
-     */
     @Transactional
     public void cancelByToken(String token) {
         log.info("Cancelling service request with token: {}", token);
@@ -119,9 +106,6 @@ public class ServiceRequestService {
         log.info("Service request cancelled: {}", token);
     }
 
-    /**
-     * Get all service requests (for staff)
-     */
     @Transactional(readOnly = true)
     public List<ServiceRequestResponse> getAllRequests(String municipalityName) {
         log.debug("Fetching all service requests for municipality: {}", municipalityName);
@@ -138,9 +122,6 @@ public class ServiceRequestService {
             .collect(Collectors.toList());
     }
 
-    /**
-     * Update service request status (for staff)
-     */
     @Transactional
     public ServiceRequestResponse updateStatus(Long id, UpdateStatusRequest updateRequest) {
         log.info("Updating status for request ID: {} to {}", id, updateRequest.getNewStatus());
@@ -148,7 +129,6 @@ public class ServiceRequestService {
         ServiceRequest request = serviceRequestRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Service request", "id", id));
 
-        // Business Rule: Validate status transition
         validateStatusTransition(request.getStatus(), updateRequest.getNewStatus());
 
         RequestStatus previousStatus = request.getStatus();
@@ -162,9 +142,6 @@ public class ServiceRequestService {
         return ServiceRequestResponse.fromEntity(updatedRequest);
     }
 
-    /**
-     * Validate status transition rules
-     */
     private void validateStatusTransition(RequestStatus current, RequestStatus newStatus) {
         if (current == RequestStatus.COMPLETED) {
             throw new BusinessException("Cannot change status of completed request");
@@ -174,7 +151,6 @@ public class ServiceRequestService {
             throw new BusinessException("Can only reopen cancelled requests to RECEIVED status");
         }
 
-        // Define valid transitions
         boolean validTransition = switch (current) {
             case RECEIVED -> newStatus == RequestStatus.ASSIGNED || 
                            newStatus == RequestStatus.CANCELLED;
@@ -193,9 +169,6 @@ public class ServiceRequestService {
         }
     }
 
-    /**
-     * Create status history entry
-     */
     private void createStatusHistory(ServiceRequest request, RequestStatus previousStatus, 
                                      RequestStatus newStatus, String notes) {
         StatusHistory history = new StatusHistory();

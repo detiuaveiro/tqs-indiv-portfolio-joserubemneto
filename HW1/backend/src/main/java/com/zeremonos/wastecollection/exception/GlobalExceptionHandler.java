@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Global exception handler for REST controllers
- */
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {

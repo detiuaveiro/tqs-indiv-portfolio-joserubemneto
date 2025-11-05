@@ -43,7 +43,6 @@ public class MunicipalityService {
                 return Collections.emptyList();
             }
 
-            // Convert string array to MunicipalityDTO list
             List<MunicipalityDTO> municipalities = Arrays.stream(municipalityNames)
                     .map(MunicipalityDTO::new)
                     .toList();

@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST Controller for staff operations
- */
 @RestController
 @RequestMapping("/api/staff/requests")
 @RequiredArgsConstructor
@@ -23,10 +20,6 @@ public class StaffController {
 
     private final ServiceRequestService serviceRequestService;
 
-    /**
-     * Get all service requests with optional municipality filter
-     * GET /api/staff/requests?municipality=Lisboa
-     */
     @GetMapping
     public ResponseEntity<List<ServiceRequestResponse>> getAllRequests(
             @RequestParam(required = false) String municipality) {
@@ -37,10 +30,6 @@ public class StaffController {
         return ResponseEntity.ok(requests);
     }
 
-    /**
-     * Update service request status
-     * PUT /api/staff/requests/{id}/status
-     */
     @PutMapping("/{id}/status")
     public ResponseEntity<ServiceRequestResponse> updateStatus(
             @PathVariable Long id,
