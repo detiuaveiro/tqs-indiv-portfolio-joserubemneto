@@ -1,166 +1,301 @@
-# ZeroMonos Waste Collection System
+# ZeroMonos - Waste Collection System
 
-Sistema de agendamento de recolha de resíduos volumosos para múltiplos municípios.
+Sistema de gestão de recolha de resíduos volumosos desenvolvido para o mid-term assignment de Teste e Qualidade de Software.
 
-## Descrição
-
-O ZeroMonos fornece serviços de recolha de lixo para múltiplos municípios e está a implementar um sistema para permitir que os cidadãos agendem a recolha de resíduos volumosos (colchões, eletrodomésticos antigos, etc.). Para melhor satisfação do cliente, a empresa quer um portal web e uma aplicação móvel para permitir que os cidadãos façam auto-agendamento de recolha de itens, na sua conveniência.
-
-## Tecnologias Utilizadas
+## 🚀 Tecnologias Utilizadas
 
 ### Backend
 - **Java 17**
 - **Spring Boot 3.4.0**
-  - Spring Web (REST API)
-  - Spring Data JPA
-  - Spring WebFlux (WebClient para API externa)
-  - Spring Validation
+- **Spring Data JPA**
 - **H2 Database** (in-memory)
+- **Spring WebFlux** (para integração com API externa)
 - **Lombok**
-- **Maven**
+- **JUnit 5 & Mockito** (testes unitários)
+- **REST-Assured** (testes de integração)
+- **WireMock** (mock de API externa)
+- **JaCoCo** (code coverage)
 
 ### Frontend
-- **React** (com Vite)
-- **Axios** (chamadas HTTP)
-- **React Router** (navegação)
+- **React 18**
+- **React Router DOM** (navegação)
+- **Axios** (HTTP client)
+- **CSS3** (estilização)
+- **Vite** (build tool)
 
-### API Externa
-- **GeoAPI.pt** - fornecimento de lista de municípios portugueses
+### Integração Externa
+- **GeoAPI.pt** - API para obter lista de municípios portugueses
 
-### Testes
-- **JUnit 5** - Unit tests
-- **Mockito** - Mocking
-- **WireMock/MockWebServer** - Mock de API externa
-- **MockMvc** - Integration tests
-- **REST-Assured** - API testing
-- **Cucumber + Selenium WebDriver** - BDD e testes funcionais
-- **JMeter/Gatling** - Performance tests
+## 📋 Funcionalidades
 
-### Qualidade
-- **SonarCloud** - Análise de código e métricas de qualidade
+### Para Cidadãos
+- ✅ Criar pedido de recolha sem registo obrigatório
+- ✅ Selecionar município de uma lista fechada (API externa)
+- ✅ Escolher data e horário preferencial
+- ✅ Receber token único para consulta
+- ✅ Consultar estado do pedido com o token
+- ✅ Cancelar pedido (se ainda não estiver completo)
 
-## Estrutura do Projeto
+### Regras de Negócio
+- ✅ Data de recolha deve ser no futuro
+- ✅ Máximo de 10 pedidos ativos por município por dia
+- ✅ Validação de transições de estado
+- ✅ Histórico completo de mudanças de estado com timestamps
+
+### Estados do Pedido
+1. **RECEIVED** - Pedido recebido
+2. **ASSIGNED** - Atribuído a equipa
+3. **IN_PROGRESS** - Recolha em progresso
+4. **COMPLETED** - Concluído
+5. **CANCELLED** - Cancelado
+
+## 🏗️ Estrutura do Projeto
 
 ```
 HW1/
-├── backend/              # API REST Spring Boot
+├── backend/                 # Spring Boot application
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/zeremonos/wastecollection/
-│   │   │   │   ├── controller/
-│   │   │   │   ├── service/
-│   │   │   │   ├── repository/
-│   │   │   │   ├── model/
-│   │   │   │   ├── dto/
-│   │   │   │   ├── exception/
-│   │   │   │   └── config/
+│   │   │   │   ├── config/          # WebClient configuration
+│   │   │   │   ├── controller/      # REST controllers
+│   │   │   │   ├── dto/             # Data Transfer Objects
+│   │   │   │   ├── exception/       # Exception handling
+│   │   │   │   ├── model/           # JPA entities
+│   │   │   │   ├── repository/      # Spring Data repositories
+│   │   │   │   └── service/         # Business logic
 │   │   │   └── resources/
-│   │   └── test/
+│   │   │       └── application.properties
+│   │   └── test/                    # Unit & Integration tests
 │   └── pom.xml
-├── frontend/             # Interface React
+├── frontend/                # React application
 │   ├── src/
-│   │   ├── components/
-│   │   ├── services/
-│   │   ├── pages/
-│   │   └── utils/
+│   │   ├── components/      # React components
+│   │   │   ├── Home.jsx
+│   │   │   ├── CreateRequest.jsx
+│   │   │   └── CheckRequest.jsx
+│   │   ├── services/        # API integration
+│   │   │   └── api.js
+│   │   ├── App.jsx
+│   │   └── main.jsx
 │   └── package.json
-├── docs/                 # Documentação e vídeo
-└── performance-tests/    # Testes de performance
+└── docs/                    # Documentation
+    └── API.md              # REST API documentation
 ```
 
-## Como Executar
+## 🚀 Como Executar
+
+### Pré-requisitos
+- Java 17+
+- Node.js 16+
+- Maven 3.6+
 
 ### Backend
 
-1. Navegar para a pasta backend:
 ```bash
 cd HW1/backend
-```
 
-2. Executar com Maven:
-```bash
+# Executar testes
+./mvnw test
+
+# Iniciar aplicação
 ./mvnw spring-boot:run
 ```
 
 O backend estará disponível em: `http://localhost:8080`
 
-Console H2: `http://localhost:8080/h2-console`
-
 ### Frontend
 
-1. Navegar para a pasta frontend:
 ```bash
 cd HW1/frontend
-```
 
-2. Instalar dependências (se ainda não instaladas):
-```bash
+# Instalar dependências
 npm install
-```
 
-3. Executar em modo de desenvolvimento:
-```bash
+# Iniciar aplicação
 npm run dev
 ```
 
 O frontend estará disponível em: `http://localhost:5173`
 
-## Funcionalidades
+## 🧪 Testes
 
-### Para Cidadãos
-- Criar pedido de recolha de resíduos volumosos
-- Selecionar município de uma lista
-- Escolher data e horário preferencial
-- Receber token de acesso após agendamento
-- Consultar detalhes da reserva com token
-- Cancelar reserva (opcional)
-- Ver histórico de estados da reserva
+### Backend
 
-### Para Staff
-- Visualizar todos os pedidos de recolha
-- Filtrar pedidos por município
-- Atualizar estado dos pedidos
-- Ver histórico de mudanças de estado
-
-## API Endpoints
-
-### Cidadãos
-- `POST /api/requests` - Criar nova reserva
-- `GET /api/requests/{token}` - Consultar reserva por token
-- `DELETE /api/requests/{token}` - Cancelar reserva
-
-### Staff
-- `GET /api/staff/requests` - Listar todas as reservas
-- `GET /api/staff/requests?municipality={name}` - Filtrar por município
-- `PUT /api/staff/requests/{id}/status` - Atualizar status
-
-### Auxiliares
-- `GET /api/municipalities` - Obter lista de municípios
-
-## Testes
-
-### Executar todos os testes (backend)
 ```bash
 cd HW1/backend
+
+# Executar todos os testes
 ./mvnw test
-```
 
-### Executar testes de integração
-```bash
+# Executar com relatório de cobertura
 ./mvnw verify
+
+# Ver relatório JaCoCo
+open target/site/jacoco/index.html
 ```
 
-### Análise SonarCloud
+### Cobertura de Testes
+- ✅ **38 testes** implementados
+- ✅ Testes unitários (models, services)
+- ✅ Testes de integração (repositories)
+- ✅ Testes REST-Assured (controllers)
+- ✅ Testes com WireMock (API externa)
+
+## 📡 Endpoints da API
+
+### Cidadãos
+
+#### Criar Pedido
+```http
+POST /api/requests
+Content-Type: application/json
+
+{
+  "municipalityCode": "LISB01",
+  "municipalityName": "Lisboa",
+  "citizenName": "João Silva",
+  "citizenEmail": "joao@example.com",
+  "citizenPhone": "912345678",
+  "pickupAddress": "Rua Example, 123",
+  "itemDescription": "Old refrigerator and washing machine",
+  "preferredDate": "2025-11-15",
+  "preferredTimeSlot": "MORNING"
+}
+```
+
+#### Consultar Pedido
+```http
+GET /api/requests/{token}
+```
+
+#### Cancelar Pedido
+```http
+DELETE /api/requests/{token}
+```
+
+### Staff (Gestão)
+
+#### Listar Todos os Pedidos
+```http
+GET /api/staff/requests?municipality=Lisboa
+```
+
+#### Atualizar Estado
+```http
+PUT /api/staff/requests/{id}/status
+Content-Type: application/json
+
+{
+  "newStatus": "ASSIGNED",
+  "notes": "Assigned to team A"
+}
+```
+
+### Municípios
+
+#### Obter Lista de Municípios
+```http
+GET /api/municipalities
+```
+
+Ver documentação completa em: [docs/API.md](docs/API.md)
+
+## 🗃️ Base de Dados
+
+### H2 Console
+Aceder à consola H2 em: `http://localhost:8080/h2-console`
+
+**Configuração:**
+- JDBC URL: `jdbc:h2:mem:wastecollectiondb`
+- Username: `sa`
+- Password: _(deixar vazio)_
+
+### Tabelas Principais
+- `service_requests` - Pedidos de recolha
+- `status_history` - Histórico de estados
+
+## ⚙️ Configurações
+
+### application.properties
+```properties
+# H2 Database
+spring.datasource.url=jdbc:h2:mem:wastecollectiondb
+spring.h2.console.enabled=true
+
+# External API
+geoapi.base-url=https://json.geoapi.pt
+
+# Business Rules
+app.max-requests-per-municipality-per-day=10
+```
+
+## 📊 Qualidade de Código
+
+### SonarCloud
+O projeto está configurado para análise no SonarCloud:
+
 ```bash
-./mvnw clean verify sonar:sonar -Dsonar.token=<TOKEN>
+# Executar análise local
+./mvnw clean verify sonar:sonar \
+  -Dsonar.projectKey=your-project-key \
+  -Dsonar.organization=your-org \
+  -Dsonar.host.url=https://sonarcloud.io \
+  -Dsonar.token=your-token
 ```
 
-## Autores
+## 🎨 Interface do Utilizador
 
-- José Rubem Neto
+### Páginas Disponíveis
 
-## Disciplina
+1. **Home** (`/`) - Página inicial com informações e links
+2. **Criar Pedido** (`/create`) - Formulário de criação de pedido
+3. **Consultar Pedido** (`/check`) - Consulta por token com histórico completo
 
-TQS - Teste e Qualidade de Software
-Universidade de Aveiro
+### Características da UI
+- ✨ Design moderno e responsivo
+- 🎯 Formulários com validação
+- 📊 Timeline visual do histórico de estados
+- 🎨 Feedback visual para ações
+- 📱 Mobile-friendly
 
+## 🔒 Validações
+
+### Backend
+- Campos obrigatórios
+- Email válido
+- Telefone com 9 dígitos
+- Data no futuro
+- Descrição entre 10-500 caracteres
+- Limite diário por município
+
+### Frontend
+- Validação HTML5
+- Feedback imediato de erros
+- Mensagens claras de validação
+
+## 📝 Notas de Desenvolvimento
+
+### Decisões Técnicas
+1. **H2 in-memory** para facilitar testes e desenvolvimento
+2. **WebClient** para chamadas assíncronas à GeoAPI.pt
+3. **Cache** para lista de municípios (reduzir chamadas API)
+4. **Exception handling** centralizado com @RestControllerAdvice
+5. **DTOs** separados para requests e responses
+6. **Status History** com timestamps para auditoria completa
+
+### Melhorias Futuras
+- [ ] Autenticação para staff
+- [ ] Paginação na listagem de pedidos
+- [ ] Filtros avançados
+- [ ] Notificações por email
+- [ ] Upload de fotos dos itens
+- [ ] Dashboard com estatísticas
+
+## 👥 Autor
+
+José Rubem Neto - Universidade de Aveiro - TQS 2024/2025
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins académicos.
