@@ -29,7 +29,6 @@ class ServiceRequestRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        // Create first service request
         serviceRequest1 = new ServiceRequest();
         serviceRequest1.setMunicipalityCode("1301");
         serviceRequest1.setMunicipalityName("Lisboa");
@@ -42,7 +41,6 @@ class ServiceRequestRepositoryTest {
         serviceRequest1.setPreferredTimeSlot(TimeSlot.MORNING);
         serviceRequest1 = entityManager.persistAndFlush(serviceRequest1);
 
-        // Create second service request
         serviceRequest2 = new ServiceRequest();
         serviceRequest2.setMunicipalityCode("0901");
         serviceRequest2.setMunicipalityName("Porto");
@@ -108,7 +106,6 @@ class ServiceRequestRepositoryTest {
         List<ServiceRequest> requests = repository.findAllByOrderByCreatedAtDesc();
         
         assertThat(requests).hasSize(2);
-        // Most recent should be first (serviceRequest2 was created after serviceRequest1)
         assertThat(requests.get(0).getId()).isGreaterThan(requests.get(1).getId());
     }
 
@@ -136,7 +133,6 @@ class ServiceRequestRepositoryTest {
 
     @Test
     void testCountActiveRequestsByMunicipalityAndDate_ExcludesCancelled() {
-        // Update service request to CANCELLED
         serviceRequest1.updateStatus(RequestStatus.CANCELLED, "Cancelled by user");
         entityManager.persistAndFlush(serviceRequest1);
         
