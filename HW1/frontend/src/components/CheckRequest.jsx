@@ -20,11 +20,8 @@ const CheckRequest = () => {
       setRequest(data);
     } catch (err) {
       console.error('Error fetching request:', err);
-      if (err.response?.status === 404) {
-        setError('Request not found. Please check your token.');
-      } else {
-        setError('Failed to fetch request. Please try again.');
-      }
+      const errorMessage = err.apiError?.message || 'Failed to fetch request. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -42,11 +39,8 @@ const CheckRequest = () => {
       setShowCancelConfirm(false);
     } catch (err) {
       console.error('Error cancelling request:', err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Failed to cancel request. Please try again.');
-      }
+      const errorMessage = err.apiError?.message || 'Failed to cancel request. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

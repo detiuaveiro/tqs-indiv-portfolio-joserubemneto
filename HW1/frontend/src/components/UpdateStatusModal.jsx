@@ -61,11 +61,8 @@ const UpdateStatusModal = ({ request, onClose, onStatusUpdated }) => {
       onStatusUpdated();
     } catch (err) {
       console.error('Error updating status:', err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Failed to update status. Please try again.');
-      }
+      const errorMessage = err.apiError?.message || 'Failed to update status. Please try again.';
+      setError(errorMessage);
       setLoading(false);
     }
   };

@@ -9,6 +9,45 @@ const api = axios.create({
   },
 });
 
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // Server responded with error status
+      const { status, data } = error.response;
+      
+      console.error(`API Error [${status}]:`, data);
+      
+      // Attach structured error information
+      error.apiError = {
+        status,
+        message: data.message || 'An error occurred',
+        errors: data.errors || null, // Validation errors
+        timestamp: data.timestamp
+      };
+    } else if (error.request) {
+      // Request made but no response
+      console.error('Network Error: No response from server');
+      error.apiError = {
+        status: 0,
+        message: 'Cannot connect to server. Please check your connection.',
+        errors: null
+      };
+    } else {
+      // Error setting up request
+      console.error('Request Error:', error.message);
+      error.apiError = {
+        status: -1,
+        message: error.message || 'An unexpected error occurred',
+        errors: null
+      };
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 // Municipality endpoints
 export const getMunicipalities = async () => {
   const response = await api.get('/municipalities');

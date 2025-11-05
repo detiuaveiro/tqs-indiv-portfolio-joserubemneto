@@ -31,7 +31,8 @@ const CreateRequest = () => {
       setMunicipalities(data);
     } catch (err) {
       console.error('Error loading municipalities:', err);
-      setError('Failed to load municipalities. Please try again.');
+      const errorMessage = err.apiError?.message || 'Failed to load municipalities. Please try again.';
+      setError(errorMessage);
     }
   };
 
@@ -79,12 +80,17 @@ const CreateRequest = () => {
     } catch (err) {
       console.error('Error creating request:', err);
       
-      if (err.response?.data?.errors) {
-        // Validation errors
-        const errors = Object.values(err.response.data.errors).join(', ');
-        setError(`Validation error: ${errors}`);
-      } else if (err.response?.data?.message) {
-        setError(err.response.data.message);
+      // Use structured error from interceptor
+      if (err.apiError) {
+        if (err.apiError.errors) {
+          // Validation errors - format nicely
+          const errorMessages = Object.entries(err.apiError.errors)
+            .map(([field, message]) => `${field}: ${message}`)
+            .join('; ');
+          setError(`Errors: ${errorMessages}`);
+        } else {
+          setError(err.apiError.message);
+        }
       } else {
         setError('Failed to create request. Please try again.');
       }
@@ -132,7 +138,6 @@ const CreateRequest = () => {
               name="municipalityCode"
               value={formData.municipalityCode}
               onChange={handleMunicipalityChange}
-              required
             >
               <option value="">Select a municipality</option>
               {municipalities.map((municipality) => (

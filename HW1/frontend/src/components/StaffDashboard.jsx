@@ -38,6 +38,7 @@ const StaffDashboard = () => {
       setMunicipalities(data);
     } catch (err) {
       console.error('Error loading municipalities:', err);
+      // Don't set error for this, it's not critical
     }
   };
 
@@ -49,7 +50,8 @@ const StaffDashboard = () => {
       setRequests(data);
     } catch (err) {
       console.error('Error loading requests:', err);
-      setError('Failed to load requests. Please try again.');
+      const errorMessage = err.apiError?.message || 'Failed to load requests. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
