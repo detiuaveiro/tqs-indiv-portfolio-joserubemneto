@@ -36,6 +36,14 @@ Sistema de gestão de recolha de resíduos volumosos desenvolvido para o mid-ter
 - ✅ Consultar estado do pedido com o token
 - ✅ Cancelar pedido (se ainda não estiver completo)
 
+### Para Staff (Gestão)
+- ✅ Dashboard com estatísticas em tempo real
+- ✅ Visualizar todos os pedidos
+- ✅ Filtrar por município e estado
+- ✅ Atualizar estado dos pedidos
+- ✅ Adicionar notas às mudanças de estado
+- ✅ Visualização em cards com informação completa
+
 ### Regras de Negócio
 - ✅ Data de recolha deve ser no futuro
 - ✅ Máximo de 10 pedidos ativos por município por dia
@@ -201,6 +209,20 @@ GET /api/municipalities
 
 Ver documentação completa em: [docs/API.md](docs/API.md)
 
+## 👥 Staff Interface
+
+Para aceder à interface de gestão: **http://localhost:5173/staff**
+
+### Funcionalidades
+- Dashboard com estatísticas (Total, Received, Assigned, In Progress, Completed, Cancelled)
+- Lista de todos os pedidos em cards
+- Filtros por município e estado
+- Atualização de estado com regras de transição
+- Adição de notas em cada mudança de estado
+- Interface responsiva e intuitiva
+
+Ver guia completo: [docs/STAFF_GUIDE.md](docs/STAFF_GUIDE.md)
+
 ## 🗃️ Base de Dados
 
 ### H2 Console
@@ -251,12 +273,15 @@ O projeto está configurado para análise no SonarCloud:
 1. **Home** (`/`) - Página inicial com informações e links
 2. **Criar Pedido** (`/create`) - Formulário de criação de pedido
 3. **Consultar Pedido** (`/check`) - Consulta por token com histórico completo
+4. **Staff Dashboard** (`/staff`) - Painel de gestão para staff
 
 ### Características da UI
 - ✨ Design moderno e responsivo
 - 🎯 Formulários com validação
 - 📊 Timeline visual do histórico de estados
+- 📈 Dashboard com estatísticas em tempo real
 - 🎨 Feedback visual para ações
+- 🔄 Filtros dinâmicos (município e estado)
 - 📱 Mobile-friendly
 
 ## 🔒 Validações

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './components/Home';
 import CreateRequest from './components/CreateRequest';
 import CheckRequest from './components/CheckRequest';
+import StaffDashboard from './components/StaffDashboard';
 import './App.css';
 
 function App() {
@@ -30,6 +31,11 @@ function App() {
                   Check Status
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/staff" className="nav-link nav-link-staff">
+                  Staff Dashboard
+                </Link>
+              </li>
             </ul>
           </div>
         </nav>
@@ -39,6 +45,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<CreateRequest />} />
             <Route path="/check" element={<CheckRequest />} />
+            <Route path="/staff" element={<StaffDashboard />} />
           </Routes>
         </main>
 
