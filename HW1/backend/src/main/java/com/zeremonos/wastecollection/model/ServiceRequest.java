@@ -90,7 +90,7 @@ public class ServiceRequest {
         if (this.token == null) {
             this.token = UUID.randomUUID().toString();
         }
-        addStatusChange(null, this.status, "Initial request received");
+        // Note: Status history is created by the service layer
     }
 
     public void addStatusChange(RequestStatus previousStatus, RequestStatus newStatus, String notes) {

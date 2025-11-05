@@ -44,7 +44,7 @@ class ServiceRequestTest {
 
     @Test
     void testUpdateStatus() {
-        serviceRequest.onCreate(); // Initialize status history
+        serviceRequest.addStatusChange(null, RequestStatus.RECEIVED, "Initial status");
         
         serviceRequest.updateStatus(RequestStatus.ASSIGNED, "Assigned to team A");
         
