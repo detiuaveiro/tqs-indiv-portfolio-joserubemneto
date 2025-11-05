@@ -32,6 +32,8 @@
 		<cucumber.version>7.18.0</cucumber.version>
 		<selenium.version>4.18.1</selenium.version>
 		<wiremock.version>3.5.4</wiremock.version>
+		<gatling.version>3.10.3</gatling.version>
+		<gatling-maven-plugin.version>4.7.0</gatling-maven-plugin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -151,6 +153,14 @@
 			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Gatling for Performance Testing -->
+		<dependency>
+			<groupId>io.gatling.highcharts</groupId>
+			<artifactId>gatling-charts-highcharts</artifactId>
+			<version>${gatling.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -206,6 +216,19 @@
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>3.11.0.3922</version>
+			</plugin>
+
+			<!-- Gatling Maven Plugin -->
+			<plugin>
+				<groupId>io.gatling</groupId>
+				<artifactId>gatling-maven-plugin</artifactId>
+				<version>${gatling-maven-plugin.version}</version>
+				<configuration>
+					<runMultipleSimulations>true</runMultipleSimulations>
+					<includes>
+						<include>**/*Simulation.java</include>
+					</includes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
