@@ -6,6 +6,7 @@ const CreateRequest = () => {
   const [municipalities, setMunicipalities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(null);
   const [token, setToken] = useState(null);
 
@@ -52,12 +53,17 @@ const CreateRequest = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    // Clear field-specific error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors({ ...fieldErrors, [name]: null });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setFieldErrors({});
     setSuccess(null);
 
     try {
@@ -83,11 +89,8 @@ const CreateRequest = () => {
       // Use structured error from interceptor
       if (err.apiError) {
         if (err.apiError.errors) {
-          // Validation errors - format nicely
-          const errorMessages = Object.entries(err.apiError.errors)
-            .map(([field, message]) => `${field}: ${message}`)
-            .join('; ');
-          setError(`Errors: ${errorMessages}`);
+          // Validation errors - set per field
+          setFieldErrors(err.apiError.errors);
         } else {
           setError(err.apiError.message);
         }
@@ -99,11 +102,6 @@ const CreateRequest = () => {
     }
   };
 
-  const getMinDate = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
-  };
 
   return (
     <div className="create-request-container">
@@ -146,6 +144,9 @@ const CreateRequest = () => {
                 </option>
               ))}
             </select>
+            {fieldErrors.municipalityCode && (
+              <div className="field-error">{fieldErrors.municipalityCode}</div>
+            )}
           </div>
 
           <div className="form-group">
@@ -160,8 +161,10 @@ const CreateRequest = () => {
               onChange={handleChange}
               placeholder="Street, number, postal code"
               maxLength={200}
-              required
             />
+            {fieldErrors.pickupAddress && (
+              <div className="field-error">{fieldErrors.pickupAddress}</div>
+            )}
           </div>
         </div>
 
@@ -180,8 +183,10 @@ const CreateRequest = () => {
               onChange={handleChange}
               placeholder="Your full name"
               maxLength={100}
-              required
             />
+            {fieldErrors.citizenName && (
+              <div className="field-error">{fieldErrors.citizenName}</div>
+            )}
           </div>
 
           <div className="form-row">
@@ -196,6 +201,9 @@ const CreateRequest = () => {
                 placeholder="your@email.com"
                 maxLength={100}
               />
+              {fieldErrors.citizenEmail && (
+                <div className="field-error">{fieldErrors.citizenEmail}</div>
+              )}
             </div>
 
             <div className="form-group">
@@ -211,8 +219,10 @@ const CreateRequest = () => {
                 placeholder="912345678"
                 pattern="[0-9]{9}"
                 title="Phone must be 9 digits"
-                required
               />
+              {fieldErrors.citizenPhone && (
+                <div className="field-error">{fieldErrors.citizenPhone}</div>
+              )}
             </div>
           </div>
         </div>
@@ -233,11 +243,13 @@ const CreateRequest = () => {
               rows={4}
               minLength={10}
               maxLength={500}
-              required
             />
             <small className="char-counter">
               {formData.itemDescription.length}/500 characters
             </small>
+            {fieldErrors.itemDescription && (
+              <div className="field-error">{fieldErrors.itemDescription}</div>
+            )}
           </div>
 
           <div className="form-row">
@@ -251,9 +263,10 @@ const CreateRequest = () => {
                 name="preferredDate"
                 value={formData.preferredDate}
                 onChange={handleChange}
-                min={getMinDate()}
-                required
               />
+              {fieldErrors.preferredDate && (
+                <div className="field-error">{fieldErrors.preferredDate}</div>
+              )}
             </div>
 
             <div className="form-group">
@@ -265,12 +278,14 @@ const CreateRequest = () => {
                 name="preferredTimeSlot"
                 value={formData.preferredTimeSlot}
                 onChange={handleChange}
-                required
               >
                 <option value="MORNING">Morning (08:00 - 12:00)</option>
                 <option value="AFTERNOON">Afternoon (12:00 - 18:00)</option>
                 <option value="EVENING">Evening (18:00 - 21:00)</option>
               </select>
+              {fieldErrors.preferredTimeSlot && (
+                <div className="field-error">{fieldErrors.preferredTimeSlot}</div>
+              )}
             </div>
           </div>
         </div>

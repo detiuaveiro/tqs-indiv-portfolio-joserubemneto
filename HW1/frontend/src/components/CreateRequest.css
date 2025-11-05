@@ -137,6 +137,14 @@
   font-size: 0.875rem;
 }
 
+.field-error {
+  display: block;
+  margin-top: 0.5rem;
+  color: #dc3545;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
 .form-actions {
   display: flex;
   justify-content: center;
