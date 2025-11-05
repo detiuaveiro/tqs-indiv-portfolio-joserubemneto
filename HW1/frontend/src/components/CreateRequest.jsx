@@ -108,21 +108,6 @@ const CreateRequest = () => {
       <h1>Request Waste Collection</h1>
       <p className="subtitle">Schedule a pickup for your large items</p>
 
-      {error && <div className="alert alert-error">{error}</div>}
-      {success && (
-        <div className="alert alert-success">
-          <p>{success}</p>
-          <p className="token-display">
-            <strong>Your Access Token:</strong>
-            <br />
-            <code>{token}</code>
-          </p>
-          <p className="token-note">
-            ⚠️ Save this token! You'll need it to check or cancel your request.
-          </p>
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} className="request-form">
         <div className="form-section">
           <h2>Location Information</h2>
@@ -296,6 +281,21 @@ const CreateRequest = () => {
           </button>
         </div>
       </form>
+
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && (
+        <div className="alert alert-success">
+          <p>{success}</p>
+          <p className="token-display">
+            <strong>Your Access Token:</strong>
+            <br />
+            <code>{token}</code>
+          </p>
+          <p className="token-note">
+            ⚠️ Save this token! You'll need it to check or cancel your request.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
