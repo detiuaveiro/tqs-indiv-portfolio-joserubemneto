@@ -14,7 +14,11 @@ Sistema de gestão de recolha de resíduos volumosos desenvolvido para o mid-ter
 - **JUnit 5 & Mockito** (testes unitários)
 - **REST-Assured** (testes de integração)
 - **WireMock** (mock de API externa)
+- **Cucumber** (BDD tests)
+- **Selenium WebDriver** (functional tests)
+- **Gatling** (performance tests)
 - **JaCoCo** (code coverage)
+- **SLF4J + Logback** (structured logging)
 
 ### Frontend
 - **React 18**
@@ -136,6 +140,15 @@ cd HW1/backend
 # Executar todos os testes
 ./mvnw test
 
+# Executar apenas testes unitários
+./mvnw test -Dtest='!*IT,!CucumberTest'
+
+# Executar apenas testes de integração
+./mvnw test -Dtest='*IT'
+
+# Executar apenas testes BDD
+./mvnw test -Dtest=CucumberTest
+
 # Executar com relatório de cobertura
 ./mvnw verify
 
@@ -143,11 +156,136 @@ cd HW1/backend
 open target/site/jacoco/index.html
 ```
 
+### Testes BDD/Funcionais (Cucumber + Selenium)
+
+```bash
+# Opção 1: Script automatizado (recomendado)
+./run-bdd-tests.sh test
+
+# Opção 2: Manual (requer backend e frontend running)
+# Terminal 1: Start backend
+cd backend && ./mvnw spring-boot:run
+
+# Terminal 2: Start frontend
+cd frontend && npm run dev
+
+# Terminal 3: Run BDD tests
+cd backend && ./mvnw test -Dtest=CucumberTest
+```
+
+**Pré-requisitos para BDD tests:**
+- ChromeDriver instalado (brew install chromedriver)
+- Backend running em http://localhost:8080
+- Frontend running em http://localhost:5173
+
+Ver guia completo: [docs/BDD_TESTING.md](docs/BDD_TESTING.md)
+
+### Performance Tests (Gatling)
+
+```bash
+# Executar smoke test (rápido)
+./mvnw gatling:test -Dgatling.simulationClass=com.zeremonos.wastecollection.performance.BasicSmokeTestSimulation
+
+# Executar load test (5 minutos)
+./mvnw gatling:test -Dgatling.simulationClass=com.zeremonos.wastecollection.performance.LoadTestSimulation
+
+# Executar todos os testes de performance
+./mvnw gatling:test
+
+# Ver relatório HTML
+open target/gatling/*/index.html
+```
+
+**Testes disponíveis:**
+- ✅ **Smoke Test**: Verificação rápida (30s, 23 users)
+- ✅ **Load Test**: Carga realista (5 min, 50-150 users)
+- ✅ **Stress Test**: Carga extrema (3 min, até 200+ users/sec)
+- ✅ **Spike Test**: Picos súbitos (45s, spikes de 100-150 users)
+- ✅ **Endurance Test**: Estabilidade prolongada (30 min, 20 users constantes)
+
+Ver guia completo: [docs/PERFORMANCE_TESTING.md](docs/PERFORMANCE_TESTING.md)
+
+## 📝 Logging
+
+Sistema de logging estruturado com **SLF4J + Logback**:
+
+### Tipos de Logs
+
+1. **Application Logs** (`logs/application.log`)
+   - Todos os eventos da aplicação
+   - Rotação diária, max 10MB por ficheiro
+   - Retenção: 30 dias
+
+2. **Error Logs** (`logs/error.log`)
+   - Apenas erros (ERROR level)
+   - Retenção: 90 dias
+   - Crítico para troubleshooting
+
+3. **Performance Logs** (`logs/performance.log`)
+   - Tempos de execução de métodos
+   - Formato CSV para análise
+   - Retenção: 7 dias
+
+4. **Audit Logs** (`logs/audit.log`)
+   - Operações críticas (criar, cancelar, atualizar)
+   - Trail de auditoria imutável
+   - Retenção: 365 dias
+
+### Features Implementadas
+
+- ✅ **AOP Logging Aspect**: Logging automático de controllers e services
+- ✅ **Audit Aspect**: Auditoria de operações de negócio
+- ✅ **HTTP Interceptor**: Logging de requests/responses com request ID único
+- ✅ **MDC**: Request tracking com IDs únicos
+- ✅ **Async Appenders**: Performance otimizada
+- ✅ **Log Rotation**: Gestão automática de espaço
+- ✅ **Colored Console**: Output colorido para desenvolvimento
+- ✅ **Structured Logs**: Formato parseável para análise
+
+### Consultar Logs
+
+```bash
+# Ver logs em tempo real
+tail -f logs/application.log
+
+# Ver apenas erros
+tail -f logs/error.log
+
+# Ver métricas de performance
+tail -f logs/performance.log
+
+# Ver audit trail
+tail -f logs/audit.log
+
+# Procurar por request ID específico
+grep "a1b2c3d4" logs/application.log
+
+# Analisar operações lentas
+grep "SLOW" logs/application.log
+```
+
+Ver guia completo: [docs/LOGGING.md](docs/LOGGING.md)
+
 ### Cobertura de Testes
-- ✅ **38 testes** implementados
+- ✅ **121 testes unitários e de integração** implementados
+  - **33 testes** de validação de modelo (Bean Validation)
+  - **24 testes** de serviço (regras de negócio)
+  - **36 testes** de integração REST (MockMvc)
+  - **9 testes** REST-Assured (full API flow)
+  - **19 testes** de repository e models
+- ✅ **22 cenários BDD** (Cucumber + Selenium)
+  - **11 cenários** de fluxos de cidadão
+  - **11 cenários** de gestão staff
+- ✅ **5 simulações de performance** (Gatling)
+  - **Smoke Test**: Verificação básica
+  - **Load Test**: Carga realista
+  - **Stress Test**: Carga extrema
+  - **Spike Test**: Picos de tráfego
+  - **Endurance Test**: Estabilidade prolongada
 - ✅ Testes unitários (models, services)
-- ✅ Testes de integração (repositories)
-- ✅ Testes REST-Assured (controllers)
+- ✅ Testes de integração (repositories, controllers)
+- ✅ Testes funcionais end-to-end (BDD)
+- ✅ Testes de performance e carga (Gatling)
 - ✅ Testes com WireMock (API externa)
 
 ## 📡 Endpoints da API
@@ -222,6 +360,80 @@ Para aceder à interface de gestão: **http://localhost:5173/staff**
 - Interface responsiva e intuitiva
 
 Ver guia completo: [docs/STAFF_GUIDE.md](docs/STAFF_GUIDE.md)
+
+## 🎭 Testes BDD (Behavior-Driven Development)
+
+O projeto inclui testes funcionais completos usando **Cucumber** para BDD e **Selenium WebDriver** para automação de browser.
+
+### Cenários de Teste
+
+#### Citizen Service Requests (11 cenários)
+- ✅ **@smoke**: Visualizar home page
+- ✅ **@critical**: Criar pedido válido com todos os campos
+- ✅ **@critical**: Criar, salvar token e consultar pedido
+- ✅ **@critical**: Cancelar pedido pendente
+- ✅ Criar pedido para município específico
+- ✅ **@validation**: Campos obrigatórios vazios
+- ✅ **@validation**: Email inválido
+- ✅ **@validation**: Telefone inválido
+- ✅ Consultar com token inválido
+- ✅ **Scenario Outline**: Múltiplos municípios (3 exemplos)
+
+#### Staff Dashboard Management (11 cenários)
+- ✅ **@smoke**: Visualizar dashboard e estatísticas
+- ✅ **@critical**: Visualizar modal de atualização de estado
+- ✅ **@critical**: Atualizar estado para ASSIGNED
+- ✅ Filtrar por município
+- ✅ Filtrar por estado
+- ✅ Aplicar múltiplos filtros simultaneamente
+- ✅ **@workflow**: Workflow completo (RECEIVED → ASSIGNED → IN_PROGRESS → COMPLETED)
+- ✅ Visualizar estatísticas do dashboard
+- ✅ **Scenario Outline**: Múltiplas atualizações de estado (3 exemplos)
+- ✅ **@validation**: Atualizar sem notas
+- ✅ Refresh do dashboard
+
+### Arquitetura dos Testes
+
+**Feature Files:**
+- `citizen_service_requests.feature` - 11 cenários de fluxos cidadão
+- `staff_dashboard.feature` - 11 cenários de gestão staff
+
+**Step Definitions:**
+- `CitizenSteps.java` - Steps para fluxos de cidadãos
+- `StaffSteps.java` - Steps para fluxos de staff
+- `SpringContextSteps.java` - Gestão do contexto Spring
+- `Hooks.java` - Setup/teardown e screenshots on failure
+
+**Configuration:**
+- `WebDriverConfig.java` - Configuração Selenium (headless Chrome)
+- `CucumberTestRunner.java` - Runner principal com tags e reports
+
+### Tags Disponíveis
+- **@smoke**: Testes básicos de verificação
+- **@critical**: Funcionalidades críticas do sistema
+- **@validation**: Testes de validação de dados
+- **@workflow**: Fluxos completos end-to-end
+
+### Executar Testes BDD
+
+```bash
+# Opção 1: Executar todos os testes BDD
+cd HW1/backend
+./mvnw test -Dtest=CucumberTestRunner
+
+# Opção 2: Executar apenas testes críticos
+./mvnw test -Dtest=CucumberTestRunner -Dcucumber.filter.tags="@critical"
+
+# Opção 3: Executar apenas smoke tests
+./mvnw test -Dtest=CucumberTestRunner -Dcucumber.filter.tags="@smoke"
+
+# Ver relatório HTML
+open target/cucumber-reports/cucumber.html
+```
+
+**⚠️ Importante**: Backend e Frontend devem estar rodando antes de executar os testes BDD!
+
+Ver documentação completa: [docs/BDD_TESTING.md](docs/BDD_TESTING.md)
 
 ## 🗃️ Base de Dados
 

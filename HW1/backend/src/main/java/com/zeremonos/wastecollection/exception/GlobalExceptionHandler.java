@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
-        log.warn("Resource not found: {}", ex.getMessage());
+        log.warn("Resource not found: {} - Type: {}", ex.getMessage(), ex.getClass().getSimpleName());
         ErrorResponse error = new ErrorResponse(
             HttpStatus.NOT_FOUND.value(),
             ex.getMessage(),
@@ -32,7 +32,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
-        log.warn("Business rule violation: {}", ex.getMessage());
+        log.warn("Business rule violation: {} - Type: {}", ex.getMessage(), ex.getClass().getSimpleName());
+        log.debug("Business exception details:", ex);
         ErrorResponse error = new ErrorResponse(
             HttpStatus.BAD_REQUEST.value(),
             ex.getMessage(),
@@ -57,13 +58,15 @@ public class GlobalExceptionHandler {
             errors
         );
         
-        log.warn("Validation errors: {}", errors);
+        log.warn("Validation failed with {} errors: {}", errors.size(), errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        log.error("Unexpected error", ex);
+        log.error("Unexpected error occurred: {} - Message: {}", 
+            ex.getClass().getSimpleName(), ex.getMessage());
+        log.error("Full stack trace:", ex);
         ErrorResponse error = new ErrorResponse(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "An unexpected error occurred",
