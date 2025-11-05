@@ -45,7 +45,6 @@ class StaffControllerMockMvcTest {
     @Test
     @DisplayName("Should get all requests without filter")
     void testGetAllRequests_NoFilter_Returns200() throws Exception {
-        // Create test data
         createRequest("Lisboa", RequestStatus.RECEIVED);
         createRequest("Porto", RequestStatus.ASSIGNED);
         createRequest("Braga", RequestStatus.COMPLETED);
@@ -60,7 +59,6 @@ class StaffControllerMockMvcTest {
     @Test
     @DisplayName("Should filter requests by municipality")
     void testGetAllRequests_WithMunicipalityFilter_Returns200() throws Exception {
-        // Create test data
         createRequest("Lisboa", RequestStatus.RECEIVED);
         createRequest("Lisboa", RequestStatus.ASSIGNED);
         createRequest("Porto", RequestStatus.RECEIVED);
@@ -226,7 +224,6 @@ class StaffControllerMockMvcTest {
         ServiceRequest request = createRequest("Lisboa", RequestStatus.RECEIVED);
 
         UpdateStatusRequest updateRequest = new UpdateStatusRequest();
-        // newStatus is null
 
         mockMvc.perform(put("/api/staff/requests/{id}/status", request.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -255,7 +252,6 @@ class StaffControllerMockMvcTest {
 
         UpdateStatusRequest updateRequest = new UpdateStatusRequest();
         updateRequest.setNewStatus(RequestStatus.ASSIGNED);
-        // notes is null
 
         mockMvc.perform(put("/api/staff/requests/{id}/status", request.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -269,7 +265,6 @@ class StaffControllerMockMvcTest {
     void testUpdateStatus_MultipleUpdates_Success() throws Exception {
         ServiceRequest request = createRequest("Lisboa", RequestStatus.RECEIVED);
 
-        // Update 1: RECEIVED -> ASSIGNED
         UpdateStatusRequest update1 = new UpdateStatusRequest();
         update1.setNewStatus(RequestStatus.ASSIGNED);
         update1.setNotes("Assigned");
@@ -279,7 +274,6 @@ class StaffControllerMockMvcTest {
                 .content(objectMapper.writeValueAsString(update1)))
                 .andExpect(status().isOk());
 
-        // Update 2: ASSIGNED -> IN_PROGRESS
         UpdateStatusRequest update2 = new UpdateStatusRequest();
         update2.setNewStatus(RequestStatus.IN_PROGRESS);
         update2.setNotes("Started");

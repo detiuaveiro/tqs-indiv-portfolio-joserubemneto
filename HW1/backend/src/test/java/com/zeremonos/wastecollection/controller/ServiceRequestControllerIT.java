@@ -86,7 +86,6 @@ class ServiceRequestControllerIT {
 
     @Test
     void testGetRequestByToken_Success() {
-        // First create a request
         ServiceRequestDTO dto = createValidDTO();
         String token = given()
             .contentType(ContentType.JSON)
@@ -98,7 +97,6 @@ class ServiceRequestControllerIT {
             .extract()
             .path("token");
 
-        // Then retrieve it
         given()
         .when()
             .get("/api/requests/{token}", token)
@@ -122,7 +120,6 @@ class ServiceRequestControllerIT {
 
     @Test
     void testCancelRequest_Success() {
-        // First create a request
         ServiceRequestDTO dto = createValidDTO();
         String token = given()
             .contentType(ContentType.JSON)
@@ -134,14 +131,12 @@ class ServiceRequestControllerIT {
             .extract()
             .path("token");
 
-        // Then cancel it
         given()
         .when()
             .delete("/api/requests/{token}", token)
         .then()
             .statusCode(204);
 
-        // Verify it's cancelled
         given()
         .when()
             .get("/api/requests/{token}", token)
@@ -152,7 +147,6 @@ class ServiceRequestControllerIT {
 
     @Test
     void testStaffGetAllRequests() {
-        // Create some requests
         createRequest("Lisboa");
         createRequest("Porto");
 
@@ -166,7 +160,6 @@ class ServiceRequestControllerIT {
 
     @Test
     void testStaffGetRequestsByMunicipality() {
-        // Create requests for different municipalities
         createRequest("Lisboa");
         createRequest("Lisboa");
         createRequest("Porto");
@@ -183,7 +176,6 @@ class ServiceRequestControllerIT {
 
     @Test
     void testStaffUpdateStatus_Success() {
-        // Create a request
         ServiceRequestDTO dto = createValidDTO();
         Integer requestIdInt = given()
             .contentType(ContentType.JSON)
@@ -197,7 +189,6 @@ class ServiceRequestControllerIT {
         
         Long requestId = requestIdInt.longValue();
 
-        // Update status
         UpdateStatusRequest updateRequest = new UpdateStatusRequest(
             RequestStatus.ASSIGNED, 
             "Assigned to team A"
@@ -218,7 +209,6 @@ class ServiceRequestControllerIT {
 
     @Test
     void testStaffUpdateStatus_InvalidTransition_Returns400() {
-        // Create a request
         ServiceRequestDTO dto = createValidDTO();
         Integer requestIdInt = given()
             .contentType(ContentType.JSON)
@@ -232,7 +222,6 @@ class ServiceRequestControllerIT {
         
         Long requestId = requestIdInt.longValue();
 
-        // Try invalid transition (RECEIVED -> COMPLETED)
         UpdateStatusRequest updateRequest = new UpdateStatusRequest(
             RequestStatus.COMPLETED, 
             null

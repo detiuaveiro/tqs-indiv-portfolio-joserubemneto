@@ -170,8 +170,6 @@ class ServiceRequestServiceTest {
         verify(serviceRequestRepository).findByToken("invalid-token");
     }
 
-    // ==================== CANCEL REQUEST TESTS ====================
-
     @Test
     @DisplayName("Should cancel request successfully")
     void testCancelByToken_Success() {
@@ -244,8 +242,6 @@ class ServiceRequestServiceTest {
         assertThat(mockRequest.getStatus()).isEqualTo(RequestStatus.CANCELLED);
         verify(serviceRequestRepository).save(mockRequest);
     }
-
-    // ==================== UPDATE STATUS TESTS ====================
 
     @Test
     @DisplayName("Should update status from RECEIVED to ASSIGNED")
@@ -400,8 +396,6 @@ class ServiceRequestServiceTest {
         
         verify(serviceRequestRepository, never()).save(any());
     }
-
-    // ==================== GET ALL REQUESTS TESTS ====================
 
     @Test
     @DisplayName("Should retrieve all requests without filter")

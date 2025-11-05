@@ -44,8 +44,6 @@ class ServiceRequestValidationTest {
         serviceRequest.setStatus(RequestStatus.RECEIVED);
     }
 
-    // ==================== VALID OBJECT TESTS ====================
-
     @Test
     @DisplayName("Should pass validation with all valid fields")
     void testValidServiceRequest_NoViolations() {
@@ -63,8 +61,6 @@ class ServiceRequestValidationTest {
         
         assertThat(violations).isEmpty();
     }
-
-    // ==================== MUNICIPALITY VALIDATION ====================
 
     @Test
     @DisplayName("Should reject null municipality code")
@@ -95,7 +91,6 @@ class ServiceRequestValidationTest {
         
         Set<ConstraintViolation<ServiceRequest>> violations = validator.validate(serviceRequest);
         
-        // Can pass - no @Size constraint on code, only on column
         if (!violations.isEmpty()) {
             assertThat(violations.iterator().next().getMessage())
                 .containsAnyOf("20", "length");
@@ -121,7 +116,6 @@ class ServiceRequestValidationTest {
         
         Set<ConstraintViolation<ServiceRequest>> violations = validator.validate(serviceRequest);
         
-        // Can pass - no @Size constraint on name, only on column
         if (!violations.isEmpty()) {
             assertThat(violations.iterator().next().getMessage())
                 .containsAnyOf("100", "length");
@@ -218,8 +212,6 @@ class ServiceRequestValidationTest {
         
         assertThat(violations).hasSize(1);
     }
-
-    // ==================== PHONE VALIDATION ====================
 
     @Test
     @DisplayName("Should reject phone with less than 9 digits")
@@ -413,8 +405,6 @@ class ServiceRequestValidationTest {
         
         Set<ConstraintViolation<ServiceRequest>> violations = validator.validate(serviceRequest);
         
-        // Status can be null initially; it gets set to RECEIVED in @PrePersist
-        // No validation violation expected here
         assertThat(violations).isEmpty();
     }
 

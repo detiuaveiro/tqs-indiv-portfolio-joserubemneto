@@ -2,7 +2,6 @@ package com.zeremonos.wastecollection.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeremonos.wastecollection.dto.ServiceRequestDTO;
-import com.zeremonos.wastecollection.dto.UpdateStatusRequest;
 import com.zeremonos.wastecollection.model.RequestStatus;
 import com.zeremonos.wastecollection.model.ServiceRequest;
 import com.zeremonos.wastecollection.model.TimeSlot;
@@ -165,7 +164,6 @@ class CitizenControllerMockMvcTest {
     @Test
     @DisplayName("Should get request by token successfully")
     void testGetRequestByToken_ValidToken_Returns200() throws Exception {
-        // Create a request first
         String response = mockMvc.perform(post("/api/requests")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validDTO)))
@@ -176,7 +174,6 @@ class CitizenControllerMockMvcTest {
 
         String token = objectMapper.readTree(response).get("token").asText();
 
-        // Get by token
         mockMvc.perform(get("/api/requests/{token}", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").value(token))
@@ -197,7 +194,6 @@ class CitizenControllerMockMvcTest {
     @Test
     @DisplayName("Should cancel request successfully")
     void testCancelRequest_ValidToken_Returns204() throws Exception {
-        // Create a request first
         String response = mockMvc.perform(post("/api/requests")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validDTO)))
@@ -208,11 +204,9 @@ class CitizenControllerMockMvcTest {
 
         String token = objectMapper.readTree(response).get("token").asText();
 
-        // Cancel it
         mockMvc.perform(delete("/api/requests/{token}", token))
                 .andExpect(status().isNoContent());
 
-        // Verify it's cancelled
         mockMvc.perform(get("/api/requests/{token}", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("CANCELLED"));
@@ -221,7 +215,6 @@ class CitizenControllerMockMvcTest {
     @Test
     @DisplayName("Should return 400 when trying to cancel completed request")
     void testCancelRequest_CompletedRequest_Returns400() throws Exception {
-        // Create and complete a request
         ServiceRequest request = createAndSaveRequest();
         request.setStatus(RequestStatus.COMPLETED);
         serviceRequestRepository.save(request);
@@ -234,7 +227,6 @@ class CitizenControllerMockMvcTest {
     @Test
     @DisplayName("Should return 400 when trying to cancel already cancelled request")
     void testCancelRequest_AlreadyCancelled_Returns400() throws Exception {
-        // Create and cancel a request
         ServiceRequest request = createAndSaveRequest();
         request.setStatus(RequestStatus.CANCELLED);
         serviceRequestRepository.save(request);
@@ -275,13 +267,11 @@ class CitizenControllerMockMvcTest {
     @Test
     @DisplayName("Should create multiple requests for same municipality on same date")
     void testCreateMultipleRequests_SameMunicipalitySameDate_Success() throws Exception {
-        // Create first request
         mockMvc.perform(post("/api/requests")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validDTO)))
                 .andExpect(status().isCreated());
 
-        // Create second request with different citizen
         validDTO.setCitizenName("Maria Santos");
         validDTO.setCitizenPhone("923456789");
 
@@ -294,7 +284,6 @@ class CitizenControllerMockMvcTest {
     @Test
     @DisplayName("Should reject request when daily limit is reached")
     void testCreateRequest_DailyLimitReached_Returns400() throws Exception {
-        // Create 10 requests (the limit)
         for (int i = 0; i < 10; i++) {
             validDTO.setCitizenName("Citizen " + i);
             validDTO.setCitizenPhone("91234567" + i);
@@ -304,7 +293,6 @@ class CitizenControllerMockMvcTest {
                     .andExpect(status().isCreated());
         }
 
-        // 11th request should fail
         validDTO.setCitizenName("Citizen 11");
         validDTO.setCitizenPhone("912345670");
 
