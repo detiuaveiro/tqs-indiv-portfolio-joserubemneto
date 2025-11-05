@@ -31,11 +31,6 @@ function App() {
                   Check Status
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link to="/staff" className="nav-link nav-link-staff">
-                  Staff Dashboard
-                </Link>
-              </li>
             </ul>
           </div>
         </nav>
