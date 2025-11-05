@@ -1,6 +1,5 @@
 package com.zeremonos.wastecollection.dto;
 
-import com.zeremonos.wastecollection.model.RequestStatus;
 import com.zeremonos.wastecollection.model.TimeSlot;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * DTO for creating a new service request
